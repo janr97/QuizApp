@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ProfilBearbeiten"
+    android:background="@color/Hintergrund">
+
+    <TextView
+        android:id="@+id/textViewAktuell"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:text="Aktueller Spitzname: "
+        android:textColor="@android:color/background_light"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/ausgabe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:text="Spitzname"
+        android:textColor="@color/GelbUeberschrift"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/lueckenfueller2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="50sp" />
+
+    <TextView
+        android:id="@+id/textViewNeu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:text="Neuer Spitzname:"
+        android:textColor="@android:color/background_light"
+        android:textSize="24sp" />
+
+    <EditText
+        android:id="@+id/editSpitzname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Spitzname"
+        android:textColor="@android:color/background_light"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/lueckenfueller"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="100sp" />
+
+    <Button
+        android:id="@+id/speichern"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@color/ButtonNormal"
+        android:onClick="speichern"
+        android:text="Speichern"
+        android:textColor="@color/SchriftNormal"
+        android:textSize="24sp" />
+
+    <Button
+        android:id="@+id/button12"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:onClick="zurueck"
+        android:text="Zurück"
+        android:textColor="@color/SchriftNormal"
+        android:textSize="24sp"
+        android:background="@color/ButtonNormal"/>
+
+</LinearLayout>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#190133</color>
+    <color name="colorPrimaryDark">#190133</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="Hintergrund">#65418c</color>
+    <color name="ButtonNormal">#ffffff</color>
+    <color name="SchriftNormal">#190133</color>
+    <color name="Grün">#4cac3d</color>
+    <color name="Rot">#ff5257</color>
+    <color name="GrünSchrift">#0b5300</color>
+    <color name="RotSchrift">#730003</color>
+    <color name="FalschButton">#afff0007</color>
+    <color name="RichtigButton">#af2de200</color>
+    <color name ="TextViewHintergrund">#ffffff</color>
+    <color name ="GelbUeberschrift">#fcfc02</color>
+</resources>

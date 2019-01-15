@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Einstellungen"
+    android:background="@color/Hintergrund">
+
+    <Button
+        android:id="@+id/button5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:background="@color/ButtonNormal"
+        android:onClick="profil_bearbeiten"
+        android:text="Profil bearbeiten"
+        android:textColor="@color/SchriftNormal"
+        android:textSize="24sp" />
+
+    <Button
+        android:id="@+id/designAendern"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:background="@color/ButtonNormal"
+        android:text="Design ändern"
+        android:textColor="@color/SchriftNormal"
+        android:textSize="24sp" />
+
+    <Button
+        android:id="@+id/spracheAendern"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:background="@color/ButtonNormal"
+        android:text="Sprache ändern"
+        android:textColor="@color/SchriftNormal"
+        android:textSize="24sp" />
+
+    <Button
+        android:id="@+id/zurueck"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/SchriftNormal"
+        android:onClick="zurueck"
+        android:text="Zurück"
+        android:textSize="24sp"
+        android:background="@color/ButtonNormal"/>
+</LinearLayout>

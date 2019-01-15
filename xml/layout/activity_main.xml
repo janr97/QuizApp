@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity"
+    android:background="@color/Hintergrund">>
+
+    <Button
+        android:id="@+id/starten"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="20dp"
+        android:layout_weight="1"
+        android:onClick="spiel_starten"
+        android:text="Spiel starten"
+        android:textColor="@color/SchriftNormal"
+        android:textSize="24sp"
+        android:background="@drawable/runder_button"/>
+
+    <Button
+        android:id="@+id/fragenHinzufuegen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="20dp"
+        android:layout_weight="1"
+        android:onClick="fragen_hinzufuegen"
+        android:text="Eigene Fragen hinzufügen"
+        android:textColor="@color/SchriftNormal"
+        android:textSize="24sp"
+        android:background="@drawable/runder_button"/>
+
+    <Button
+        android:id="@+id/statistik"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="20dp"
+        android:layout_weight="1"
+        android:onClick="statistik_anzeigen"
+        android:text="Statistik"
+        android:textColor="@color/SchriftNormal"
+        android:textSize="24sp"
+        android:background="@drawable/runder_button"/>
+
+    <Button
+        android:id="@+id/einstellungen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="20dp"
+        android:layout_weight="1"
+        android:onClick="einstellungen_anzeigen"
+        android:text="Einstellungen"
+        android:textColor="@color/SchriftNormal"
+        android:textSize="24sp"
+        android:background="@drawable/runder_button"/>
+</LinearLayout>

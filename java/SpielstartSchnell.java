@@ -1,0 +1,582 @@
+package com.example.kevin.quiz;
+
+import android.animation.ObjectAnimator;
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.CountDownTimer;
+import android.os.Environment;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.security.SecureRandom;
+import java.util.ArrayList;
+
+
+/*Wesentliche Unterschiede/Änderungen SpielstartNormal <----> SpielstartSchnell (Blitzspiel)
+- Beantwortungszeit = 10sek
+- Variblenbezeichnungen geändert mit "Schnell" hinter ursprünglichen Variablen
+- Zeitablauf --> Frage falsch beantwortet bzw Frage beantwortet mit falschem Wert
+- aber: bei Klick auf nächste Frage --> immer noch kein Fehler
+- Extradateien erstellt für Statistische Auswertungen
+*/
+
+//ProgressBar: https://www.myandroidsolutions.com/2015/07/04/android-countdown-progressbar/#.WzUYEdIzbIU
+public class SpielstartSchnell extends AppCompatActivity {
+
+    private ObjectAnimator Fortschrittsanzeige; //Balken zur Angabe der verbleibenden Zeit
+
+    Button antwortEinsButton, antwortZweiButton, antwortDreiButton, antwortVierButton;
+    TextView frageTextView;
+    int aktuellePosition = 0; //entspricht anfangs Position 0 in der ArrayList aus der Klasse Datenbank
+
+    //zur statistischen Auswertung
+    String anzahlFragenBeantwortetGesamtSchnellString;
+    private int anzahlFragenBeantwortetGesamtSchnell;
+    String anzahlFragenRichtigBeantwortetSchnellString;
+    private int anzahlFragenRichtigBeantwortetSchnell;
+
+    private CountDownTimer mCountDownTimer;
+    private static final long beantwortungszeit = 10000; //10 Sekunden Zeit, um Antwort auszuwählen
+    long verbleibendeZeit = beantwortungszeit;
+
+    Datenbank groesseArrayList = new Datenbank();
+    int groesse = groesseArrayList.ArrayListGroesse(); //gibt die Groesse der ArrayList an
+    int[] reihenfolgeArray;            //gibt eine (Zufalls-)Reihenfolge in einem Array an
+    int aktuelleFrage;                 //gibt die aktuelle Frage aus der ArrayList an
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_spielstart_schnell);
+        setTitle("Blitzspiel");
+
+        //Schnittstellen Java - XML
+        antwortEinsButton = (Button) findViewById(R.id.antwortEinsButton);
+        antwortZweiButton = (Button) findViewById(R.id.antwortZweiButton);
+        antwortDreiButton = (Button) findViewById(R.id.antwortDreiButton);
+        antwortVierButton = (Button) findViewById(R.id.antwortVierButton);
+        frageTextView = (TextView) findViewById(R.id.frageTextView);
+
+        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.Fortschrittsanzeige);
+        Fortschrittsanzeige = ObjectAnimator.ofInt(progressBar, "progress", 0, 100);
+        Fortschrittsanzeige.setDuration(beantwortungszeit); // 10 Sekunden
+
+        reihenfolgeArray = zufallsArrayReihenfolge(0, groesse - 1); //ZufallsArrayReihenfolge aus Methode "holen"
+
+        dateiVerifizierer();
+        frageAnzeigen();
+        lesenGesamtAntworten();
+        lesenRichtigeAntworten();
+        anzahlFragenBeantwortetGesamtSchnell = Integer.parseInt(anzahlFragenBeantwortetGesamtSchnellString);
+        anzahlFragenRichtigBeantwortetSchnell = Integer.parseInt(anzahlFragenRichtigBeantwortetSchnellString);
+    }
+
+
+    //Frage mit Antwortmöglichkeiten anzeigen sowie Zufallsanordnung der Antwortmöglichkeiten,
+    //Fortschrittsanzeige und Countdown starten
+    private void frageAnzeigen() {
+
+        Datenbank fragenDatenbank = new Datenbank();
+        ArrayList<String[]> fragenSammlung = fragenDatenbank.fragenHolen(); //alle Fragen aus der Datenbank holen
+        aktuelleFrage = reihenfolgeArray[aktuellePosition];
+        String[] frage = fragenSammlung.get(aktuelleFrage); //aktuelle Frage inkl. Antwortmöglichkeiten nehmen
+
+        //zur zufälligen Anordnung der Antwortmöglichkeiten
+        int zufallszahl = (int) (Math.random() * (4 - 0) + 1); //max 4, min 0, +1 damit die 0 ausgeschlossen wird
+
+        frageTextView.setText(frage[0]);  /*Position 0 aus ArrayList ausgewählt (= die Frage)*/
+
+        //Zufällige Anordnung der Antwortmöglichkeiten, 4 Möglichkeiten der Zuordnung
+        switch (zufallszahl) {
+            case 1:
+                antwortEinsButton.setText(frage[1]);
+                antwortZweiButton.setText(frage[2]);
+                antwortDreiButton.setText(frage[3]);
+                antwortVierButton.setText(frage[4]);
+                break;
+            case 2:
+                antwortEinsButton.setText(frage[4]);
+                antwortZweiButton.setText(frage[1]);
+                antwortDreiButton.setText(frage[2]);
+                antwortVierButton.setText(frage[3]);
+                break;
+            case 3:
+                antwortEinsButton.setText(frage[3]);
+                antwortZweiButton.setText(frage[4]);
+                antwortDreiButton.setText(frage[1]);
+                antwortVierButton.setText(frage[2]);
+                break;
+            case 4:
+                antwortEinsButton.setText(frage[2]);
+                antwortZweiButton.setText(frage[3]);
+                antwortDreiButton.setText(frage[4]);
+                antwortVierButton.setText(frage[1]);
+                break;
+
+        }
+
+        Fortschrittsanzeige.start(); //Fortschrittsanzeige: Durchlauf starten
+        startTimer();  //Countdown starten
+
+    }
+
+    //https://codinginflow.com/tutorials/android/countdowntimer/part-1
+    //Methode zum Starten des Countdowns, damit nach Zeitablauf die Antwortmöglichkeiten ausgeblendet werden
+    private void startTimer() {
+        mCountDownTimer = new CountDownTimer(verbleibendeZeit, 1000) {
+
+            //Aktualisierung der verbleibenden Zeit
+            @Override
+            public void onTick(long millisUntilFinished) {
+                verbleibendeZeit = millisUntilFinished;
+            }
+
+            //Bei Ende des Timers werden die Buttons ausgeblendet und gefärbt und
+            //eine entsprechende Meldung (Toast) ausgegeben
+            @Override
+            public void onFinish() {
+                buttonAusblenden();
+                richtigeAntwortFaerben();
+                toastAusgeben(3);
+                anzahlFragenBeantwortetGesamtSchnell++;
+
+            }
+        }.start();
+    }
+
+    //aktueller Timer wird abgebrochen und zurückgesetzt
+    private void resetTimer() {
+        mCountDownTimer.cancel();
+        verbleibendeZeit = beantwortungszeit;
+
+
+    }
+
+    //Methode zur Prüfung der gegebenen Antwort
+    private boolean auswerten(String gegebeneAntwort) {
+        boolean bewerteteAntwort = false;
+        Datenbank fragenDatenbank = new Datenbank();
+        ArrayList fragenSammlung = fragenDatenbank.fragenHolen();
+        String[] speicher = (String[]) fragenSammlung.get(aktuelleFrage); //"Kopie" der Frage+Antworten zur Korrektheitsprüfung
+        if (speicher[1].equals(gegebeneAntwort)) { //prüfen, ob gegebene Antwort korrekt ist
+            bewerteteAntwort = true;
+            anzahlFragenRichtigBeantwortetSchnell++;
+        }
+        anzahlFragenBeantwortetGesamtSchnell++;
+        return bewerteteAntwort;
+    }
+
+
+    //Statistiken zur Gesamtzahl der beantworteten Fragen in Datei speichern
+    public void speichernGesamtAntworten() {
+
+        //Zugriff auf Verzeichnis "DOCUMENTS"
+        File documents = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOCUMENTS);
+        File ausgabedatei = new File(documents, "statistikGesamtAntwortenSchnell.txt");
+
+        try {
+            //Stream erzeugen
+            FileOutputStream fo = new FileOutputStream(ausgabedatei);
+            PrintWriter pw = new PrintWriter(fo);
+            //In Stream schreiben
+            pw.println(anzahlFragenBeantwortetGesamtSchnell);
+            //Stream schließen
+            pw.close();
+        } catch (IOException ex) {
+            Log.d("meineApp", ex.getMessage());
+        }
+    }
+
+
+    //Gesamtzahl der beantworteten Fragen aus Datei lesen
+    public void lesenGesamtAntworten() {
+        String zeile;
+
+        try {
+            //Zugriff auf Verzeichnis
+            File datei = Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_DOCUMENTS);
+
+            File ausgabedatei = new File(datei, "statistikGesamtAntwortenSchnell.txt");
+            // Stream erzeugen
+            BufferedReader br = new BufferedReader(
+                    new FileReader(ausgabedatei));
+
+            //aus Stream lesen, wie viele Fragen gesamt beantwortet wurden und
+            //in einer String-Variable "speichern" bzw. "merken"
+            do {
+                zeile = br.readLine();
+                anzahlFragenBeantwortetGesamtSchnellString = zeile;
+            }
+            while (zeile == null);
+
+            // Stream schließen
+            br.close();
+        } catch (IOException ex) {
+            Log.d("meineApp", ex.getMessage());
+        }
+    }
+
+
+    //Statistiken zur Anzahl der richtig beantworteten Fragen in Datei speichern
+    public void speichernRichtigeAntworten() {
+
+        //Zugriff auf Verzeichnis "DOCUMENTS"
+        File documents = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOCUMENTS);
+
+        File ausgabedatei = new File(documents, "statistikRichtigeAntwortenSchnell.txt");
+
+        try {
+            //Stream erzeugen
+            FileOutputStream fo = new FileOutputStream(ausgabedatei);
+            PrintWriter pw = new PrintWriter(fo);
+            //In Stream schreiben
+            pw.println(anzahlFragenRichtigBeantwortetSchnell);
+            //Stream schließen
+            pw.close();
+        } catch (IOException ex) {
+            Log.d("meineApp", ex.getMessage());
+        }
+    }
+
+
+    //Gesamtzahl der richtig beantworteten Fragen aus Datei lesen
+    public void lesenRichtigeAntworten() {
+        String zeile;
+
+        try {
+            //Zugriff auf Verzeichnis
+            File datei = Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_DOCUMENTS);
+
+            File ausgabedatei = new File(datei, "statistikRichtigeAntwortenSchnell.txt");
+
+            // Stream erzeugen
+            BufferedReader br = new BufferedReader(
+                    new FileReader(ausgabedatei));
+
+            // Aus Stream lesen
+            do {
+                zeile = br.readLine();
+                anzahlFragenRichtigBeantwortetSchnellString = zeile;
+            }
+            while (zeile == null);
+
+            // Stream schließen
+            br.close();
+        } catch (IOException ex) {
+            Log.d("meineApp", ex.getMessage());
+        }
+    }
+
+
+    //Methode zur Färbung der jeweils richtigen oder falschen Antworten
+    private void richtigeAntwortFaerben () {
+
+        //jeweilige Antwortmöglichkeiten holen und zu Strings konvertieren
+        String ButtonEinsErgebnis = antwortEinsButton.getText().toString();
+        String ButtonZweiErgebnis = antwortZweiButton.getText().toString();
+        String ButtonDreiErgebnis = antwortDreiButton.getText().toString();
+        String ButtonVierErgebnis = antwortVierButton.getText().toString();
+
+        Datenbank fragenDatenbank = new Datenbank();
+        ArrayList fragenSammlung = fragenDatenbank.fragenHolen();
+        String[] speicher = (String[]) fragenSammlung.get(aktuelleFrage);
+        if (speicher[1].equals(ButtonEinsErgebnis)) { //prüfen, ob gegebene Antwort korrekt ist
+            //korrekte Antwort grün färben, den Rest rot färben
+            antwortEinsButton.setBackgroundResource(R.drawable.runder_button_green);
+            antwortZweiButton.setBackgroundResource(R.drawable.runder_button_red);
+            antwortDreiButton.setBackgroundResource(R.drawable.runder_button_red);
+            antwortVierButton.setBackgroundResource(R.drawable.runder_button_red);
+        }
+        if (speicher[1].equals(ButtonZweiErgebnis)) { //prüfen, ob gegebene Antwort korrekt ist
+            antwortEinsButton.setBackgroundResource(R.drawable.runder_button_red);
+            antwortZweiButton.setBackgroundResource(R.drawable.runder_button_green);
+            antwortDreiButton.setBackgroundResource(R.drawable.runder_button_red);
+            antwortVierButton.setBackgroundResource(R.drawable.runder_button_red);
+        }
+        if (speicher[1].equals(ButtonDreiErgebnis)) { //prüfen, ob gegebene Antwort korrekt ist
+            antwortEinsButton.setBackgroundResource(R.drawable.runder_button_red);
+            antwortZweiButton.setBackgroundResource(R.drawable.runder_button_red);
+            antwortDreiButton.setBackgroundResource(R.drawable.runder_button_green);
+            antwortVierButton.setBackgroundResource(R.drawable.runder_button_red);
+        }
+        if (speicher[1].equals(ButtonVierErgebnis)) { //prüfen, ob gegebene Antwort korrekt ist
+            antwortEinsButton.setBackgroundResource(R.drawable.runder_button_red);
+            antwortZweiButton.setBackgroundResource(R.drawable.runder_button_red);
+            antwortDreiButton.setBackgroundResource(R.drawable.runder_button_red);
+            antwortVierButton.setBackgroundResource(R.drawable.runder_button_green);
+        }
+    }
+
+    /*Wenn Antwort richtig ist, dann wird popup "Richtig" angezeigt*/
+    /*Fortschrittsanzeige anhalten und nächste Frage starten*/
+    public void buttonEinsGeklickt (View view){
+
+        //Falls gegebene Antwort richtig ist, wird entsprechendes popup angezeigt und
+        //dieser Button wird grün gefärbt, alle anderen werden rot gefärbt
+        if (auswerten(antwortEinsButton.getText().toString())) {
+            popup(1);
+            antwortEinsButton.setBackgroundResource(R.drawable.runder_button_green);
+            antwortZweiButton.setBackgroundResource(R.drawable.runder_button_red);
+            antwortDreiButton.setBackgroundResource(R.drawable.runder_button_red);
+            antwortVierButton.setBackgroundResource(R.drawable.runder_button_red);
+        } else {
+            popup(2);
+            //bei falscher Antwort muss erst die richtige Antwort gefunden werden, danach Färbung des Buttons
+            richtigeAntwortFaerben();
+        }
+
+        //Nach Buttonklick werden Fortschrittsanzeige und Timer zurückgesetzt + Buttons ausgeblendet
+        Fortschrittsanzeige.cancel();
+        resetTimer();
+        buttonAusblenden();
+    }
+
+    public void buttonZweiGeklickt (View view){
+        if (auswerten(antwortZweiButton.getText().toString())) {
+            popup(1);
+            antwortEinsButton.setBackgroundResource(R.drawable.runder_button_red);
+            antwortZweiButton.setBackgroundResource(R.drawable.runder_button_green);
+            antwortDreiButton.setBackgroundResource(R.drawable.runder_button_red);
+            antwortVierButton.setBackgroundResource(R.drawable.runder_button_red);
+        } else {
+            popup(2);
+            richtigeAntwortFaerben();
+        }
+
+        Fortschrittsanzeige.cancel();
+        resetTimer();
+        buttonAusblenden();
+    }
+
+    public void buttonDreiGeklickt (View view){
+        if (auswerten(antwortDreiButton.getText().toString())) {
+            popup(1);
+            antwortEinsButton.setBackgroundResource(R.drawable.runder_button_red);
+            antwortZweiButton.setBackgroundResource(R.drawable.runder_button_red);
+            antwortDreiButton.setBackgroundResource(R.drawable.runder_button_green);
+            antwortVierButton.setBackgroundResource(R.drawable.runder_button_red);
+        } else {
+            popup(2);
+            richtigeAntwortFaerben();
+        }
+
+        Fortschrittsanzeige.cancel();
+        resetTimer();
+        buttonAusblenden();
+    }
+
+    public void buttonVierGeklickt (View view){
+        if (auswerten(antwortVierButton.getText().toString())) {
+            popup(1);
+            antwortEinsButton.setBackgroundResource(R.drawable.runder_button_red);
+            antwortZweiButton.setBackgroundResource(R.drawable.runder_button_red);
+            antwortDreiButton.setBackgroundResource(R.drawable.runder_button_red);
+            antwortVierButton.setBackgroundResource(R.drawable.runder_button_green);
+        } else {
+            popup(2);
+            richtigeAntwortFaerben();
+        }
+        Fortschrittsanzeige.cancel();
+        resetTimer();
+        buttonAusblenden();
+    }
+
+    //Methode zum anzeigen der nächsten Frage
+    public void naechsteFrage (View view){
+        //falls alle Fragen in Datenbank durchlaufen, zum "Hauptmenü" springen
+        if (aktuellePosition >= groesse-1) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            speichernGesamtAntworten();
+            speichernRichtigeAntworten();
+            //falls noch Fragen in Datenbank vorhanden, nächste Frage anzeigen
+        } else {
+            aktuellePosition++;
+            resetTimer();
+            frageAnzeigen();
+        }
+        //Buttons wieder einblenden und Rot-/Grün-Färbung entfernen
+        buttonEinblenden();
+        antwortEinsButton.setBackgroundResource(R.drawable.runder_button);
+        antwortZweiButton.setBackgroundResource(R.drawable.runder_button);
+        antwortDreiButton.setBackgroundResource(R.drawable.runder_button);
+        antwortVierButton.setBackgroundResource(R.drawable.runder_button);
+    }
+
+    //Bei Klick auf Spiel beenden erfolgt Sprung zum "Hauptmenü"
+    public void spielBeenden (View view){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        resetTimer();
+        speichernGesamtAntworten();
+        speichernRichtigeAntworten();
+    }
+
+    //Methode zum Ausblenden von Buttons, dadurch kein Klicken möglich
+    public void buttonAusblenden () {
+        antwortEinsButton.setEnabled(false);
+        antwortZweiButton.setEnabled(false);
+        antwortDreiButton.setEnabled(false);
+        antwortVierButton.setEnabled(false);
+    }
+
+    //Methode zum (Wieder-)Einblenden von Buttons, dadurch Klicken (wieder) möglich
+    public void buttonEinblenden () {
+        antwortEinsButton.setEnabled(true);
+        antwortZweiButton.setEnabled(true);
+        antwortDreiButton.setEnabled(true);
+        antwortVierButton.setEnabled(true);
+    }
+
+    //Methode zum Ausgeben von Toast's bei richtiger/falscher Antwort oder abgelaufener Zeit
+    public void toastAusgeben ( int toastNummer){
+        Toast toast;
+        TextView v;
+        switch (toastNummer) {
+            case 1:
+                toast = Toast.makeText(this, "RICHTIG!", Toast.LENGTH_SHORT);
+                v = (TextView) toast.getView().findViewById(android.R.id.message);
+                v.setTextColor(Color.GREEN);
+                toast.show();
+                break;
+            case 2:
+                toast = Toast.makeText(this, "FALSCH!", Toast.LENGTH_SHORT);
+                v = (TextView) toast.getView().findViewById(android.R.id.message);
+                v.setTextColor(Color.RED);
+                toast.show();
+                break;
+            case 3:
+                toast = Toast.makeText(this, "Zeit abgelaufen!", Toast.LENGTH_SHORT);
+                v = (TextView) toast.getView().findViewById(android.R.id.message);
+                v.setTextColor(Color.RED);
+                toast.show();
+                break;
+        }
+    }
+
+
+    //Methode zum Ausgeben von Popup's bzw. Aufrufen der Popup-Klassen (Pop=richtig, Pop2=falsch)
+    public void popup(int popupnummer){
+        switch(popupnummer) {
+            case 1:
+                startActivity(new Intent(SpielstartSchnell.this, Pop.class));
+                break;
+            case 2:
+                startActivity(new Intent(SpielstartSchnell.this, Pop2.class));
+                break;
+        }
+    }
+
+    //Diese Methode erzeugt ein Array mit Zufallswerten von "von" bis "bis"
+    //Diese Zufallswerte im Array werden für die Reihenfolge der Fragen genutzt
+    static int[] zufallsArrayReihenfolge(int von, int bis){
+        //"von" steht für den Anfangswert des Arrays, "bis" für den Endwert,
+        //dadurch erhält man die Größe des Array's
+        int groesse = bis - von + 1;
+
+        //Array um alle Zahlen zu speichern
+        int arrayZwischenspeicher[] = new int[groesse];
+        for (int i = 0; i < groesse; i++) {
+            arrayZwischenspeicher[i] = i;
+        }
+        //Array um Ergebnis(=Reihenfolge der int-Werte im Array) zu speichern
+        int[] ergebnis = new int[groesse];
+        int x = groesse;
+        SecureRandom rd = new SecureRandom();
+        for (int i = 0; i < groesse; i++) {
+            //k ist ein zufälliger Index in [0,x]
+            int k = rd.nextInt(x);
+            ergebnis[i] = arrayZwischenspeicher[k];
+            //nun haben wir einen Wert von a[k]. Wir ersetzen ihn durch den Wert des letzten Index
+            arrayZwischenspeicher[k] = arrayZwischenspeicher[x - 1];
+            //dann ziehen wir von x eins ab um einen zufälligen Index von 0 - x zu
+            //erhalten --> keine Duplikate, jeder Wert kommt genau ein Mal dran
+            x--;
+        }
+        return ergebnis;
+    }
+
+    // Diese Methode stellt sicher, dass die für die Statistik benötigten Text-Dateien vorhanden
+    // sind. Sie prüft jede der 4 Text-Dateien auf Existenz und Inhalt und erstellt und füllt
+    // diese mit einem Standardwert, sollte eine der beiden Bedingungen nicht erfüllt sein.
+    public void dateiVerifizierer() {
+        File documents = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOCUMENTS);
+        File ausgabedatei = new File(documents, "statistikGesamtAntworten.txt");
+        ausgabedatei = new File(documents, "statistikRichtigeAntworten.txt");
+        ausgabedatei = new File(documents, "statistikGesamtAntwortenSchnell.txt");
+        ausgabedatei = new File(documents, "statistikRichtigeAntwortenSchnell.txt");
+
+        if(!ausgabedatei.exists() || ausgabedatei.length()==0) {
+            ausgabedatei = new File(documents,"statistikGesamtAntworten.txt");
+            try {
+                //Stream erzeugen
+                FileOutputStream fo = new FileOutputStream(ausgabedatei);
+                // FileOutputStream fos = openFileOutput("text.txt", Context.MODE_PRIVATE);
+                PrintWriter pw = new PrintWriter(fo);
+                //In Stream schreiben
+                pw.println("0");
+                //Stream schließen
+                pw.close();
+            } catch (IOException ex) {
+                Log.d("meineApp", ex.getMessage());
+            }
+            ausgabedatei = new File(documents,"statistikRichtigeAntworten.txt");
+            try {
+                //Stream erzeugen
+                FileOutputStream fo = new FileOutputStream(ausgabedatei);
+                // FileOutputStream fos = openFileOutput("text.txt", Context.MODE_PRIVATE);
+                PrintWriter pw = new PrintWriter(fo);
+                //In Stream schreiben
+                pw.println("0");
+                //Stream schließen
+                pw.close();
+            } catch (IOException ex) {
+                Log.d("meineApp", ex.getMessage());
+            }
+            ausgabedatei = new File(documents,"statistikGesamtAntwortenSchnell.txt");
+            try {
+                //Stream erzeugen
+                FileOutputStream fo = new FileOutputStream(ausgabedatei);
+                // FileOutputStream fos = openFileOutput("text.txt", Context.MODE_PRIVATE);
+                PrintWriter pw = new PrintWriter(fo);
+                //In Stream schreiben
+                pw.println("0");
+                //Stream schließen
+                pw.close();
+            } catch (IOException ex) {
+                Log.d("meineApp", ex.getMessage());
+            }
+            ausgabedatei = new File(documents,"statistikRichtigeAntwortenSchnell.txt");
+            try {
+                //Stream erzeugen
+                FileOutputStream fo = new FileOutputStream(ausgabedatei);
+                // FileOutputStream fos = openFileOutput("text.txt", Context.MODE_PRIVATE);
+                PrintWriter pw = new PrintWriter(fo);
+                //In Stream schreiben
+                pw.println("0");
+                //Stream schließen
+                pw.close();
+            } catch (IOException ex) {
+                Log.d("meineApp", ex.getMessage());
+            }
+        }
+    }
+}
+
+

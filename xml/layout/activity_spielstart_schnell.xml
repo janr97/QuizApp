@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:orientation="vertical"
+tools:context=".SpielstartSchnell"
+android:background="@color/Hintergrund">
+
+<TextView
+    android:id="@+id/frageTextView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:gravity="center_horizontal"
+    android:text="TextView"
+    android:textColor="@android:color/background_light"
+    android:textSize="24sp"
+    android:textStyle="bold"
+    tools:height="120dp" />
+
+<Button
+    android:id="@+id/antwortEinsButton"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:background="@drawable/runder_button"
+    android:onClick="buttonEinsGeklickt"
+    android:text="Button"
+    android:textSize="18sp" />
+
+<Button
+    android:id="@+id/antwortZweiButton"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:background="@drawable/runder_button"
+    android:onClick="buttonZweiGeklickt"
+    android:text="Button"
+    android:textSize="18sp" />
+
+<Button
+    android:id="@+id/antwortDreiButton"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:background="@drawable/runder_button"
+    android:onClick="buttonDreiGeklickt"
+    android:text="Button"
+    android:textSize="18sp" />
+
+<Button
+    android:id="@+id/antwortVierButton"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:background="@drawable/runder_button"
+    android:onClick="buttonVierGeklickt"
+    android:text="Button"
+    android:textSize="18sp" />
+
+<TextView
+    android:id="@+id/ErgebnisAnzeige"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textSize="24sp" />
+
+<ProgressBar
+    android:id="@+id/Fortschrittsanzeige"
+    style="@android:style/Widget.ProgressBar.Horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:max="100"
+    android:maxHeight="60dp"
+    android:minHeight="30dp"
+    android:padding="20dp"
+    android:progress="0" />
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="bottom"
+    android:orientation="horizontal"
+    android:layout_weight="1">
+
+    <Button
+        android:id="@+id/button9"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="4dp"
+        android:layout_weight="1"
+        android:onClick="naechsteFrage"
+        android:text="Nächste Frage"
+        android:textSize="18sp"
+        android:background="@color/ButtonNormal"/>
+
+    <Button
+        android:id="@+id/button10"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="4dp"
+        android:layout_weight="1"
+        android:onClick="spielBeenden"
+        android:text="Spiel beenden"
+        android:textSize="18sp"
+        android:background="@color/ButtonNormal"/>
+</LinearLayout>
+</LinearLayout>

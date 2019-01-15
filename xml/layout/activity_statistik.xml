@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Statistik"
+    android:background="@color/Hintergrund">
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Normales Spiel:"
+            android:textColor="@color/GelbUeberschrift"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <TextView
+            android:id="@+id/textView13"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Beantwortete Fragen:"
+            android:textSize="24sp"
+            android:textColor="@android:color/background_light"/>
+
+        <TextView
+            android:id="@+id/anzahlAntwortenGesamt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:textColor="@android:color/background_light" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <TextView
+            android:id="@+id/textView11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Richtige Antworten: "
+            android:textSize="24sp"
+            android:textColor="@android:color/background_light"/>
+
+        <TextView
+            android:id="@+id/anzahlRichtigeAntworten"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/background_light"
+            android:textSize="24sp" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Falsche Antworten:"
+            android:textSize="24sp"
+            android:textColor="@android:color/background_light"/>
+
+        <TextView
+            android:id="@+id/anzahlFalscheAntworten"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/background_light"
+            android:textSize="24sp" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <TextView
+            android:id="@+id/textView16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Erfolgsquote: "
+            android:textColor="@android:color/background_light"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/richtigeFragenProzent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/background_light"
+            android:textSize="24sp" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="20dp">
+
+        <Button
+            android:id="@+id/statistikLoeschen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="statistikLoeschen"
+            android:text="Statistik löschen"
+            android:textColor="@color/SchriftNormal"
+            android:textSize="24sp"
+            android:background="@color/ButtonNormal"/>
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Blitzspiel: "
+            android:textColor="@color/GelbUeberschrift"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Beantwortete Fragen: "
+            android:textSize="24sp"
+            android:textColor="@android:color/background_light"/>
+
+        <TextView
+            android:id="@+id/anzahlAntwortenGesamtSchnell"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:textColor="@android:color/background_light" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Richtige Antworten: "
+            android:textSize="24sp"
+            android:textColor="@android:color/background_light"/>
+
+        <TextView
+            android:id="@+id/anzahlRichtigeAntwortenSchnell"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/background_light"
+            android:textSize="24sp" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Falsche Antworten: "
+            android:textSize="24sp"
+            android:textColor="@android:color/background_light"/>
+
+        <TextView
+            android:id="@+id/anzahlFalscheAntwortenSchnell"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/background_light"
+            android:textSize="24sp" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <TextView
+            android:id="@+id/textView18"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Erfolgsquote: "
+            android:textSize="24sp"
+            android:textColor="@android:color/background_light"/>
+
+        <TextView
+            android:id="@+id/richtigeFragenProzentSchnell"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/background_light"
+            android:textSize="24sp" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <Button
+            android:id="@+id/statistikLoeschenSchnell"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="statistikLoeschenSchnell"
+            android:text="Statistik löschen"
+            android:textColor="@color/SchriftNormal"
+            android:textSize="24sp"
+            android:background="@color/ButtonNormal"/>
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="20dp"
+        android:gravity="bottom|center">
+
+        <Button
+            android:id="@+id/zumHauptmenue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:background="@color/ButtonNormal"
+            android:gravity="bottom|center"
+            android:onClick="zumHauptmenue"
+            android:text="     Zum Hauptmenü    "
+            android:textColor="@color/SchriftNormal"
+            android:textSize="28sp" />
+    </TableRow>
+</TableLayout>
